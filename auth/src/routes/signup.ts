@@ -1,10 +1,9 @@
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import jwt from 'jsonwebtoken';
+import { validateRequest, BadRequestError } from '@au_ah_gelap/common'
 
-import { validateRequest } from '../middlewares/validate-request'
 import { User } from "../models/User";
-import { BadRequestError } from "../errors/bad-request-error";
 
 const router = express.Router();
 
@@ -18,7 +17,7 @@ router.post('/api/users/signup', [
   const { email, password } = req.body;
 
   const existingUser = await User.findOne({ email });
-
+  
   if (existingUser) {
     throw new BadRequestError('Email is registered!');
   }
