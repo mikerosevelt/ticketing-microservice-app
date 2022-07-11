@@ -1,7 +1,9 @@
 import { requireAuth, validateRequest } from '@au_ah_gelap/common'
 import express, { Request, Response } from 'express'
-import { body, ValidationError } from 'express-validator'
+import { body } from 'express-validator'
+import { TicketCreatedPublisher } from '../events/publishers/ticket-created-publisher'
 import { Ticket } from '../models/ticket'
+import { natsWrapper } from '../nats-wrapper'
 
 const router = express.Router()
 
@@ -18,6 +20,12 @@ router.post('/api/tickets', requireAuth, [
   })
 
   await ticket.save()
+  await new TicketCreatedPublisher(natsWrapper.client).publish({
+    id: ticket.id,
+    title: ticket.title,
+    price: ticket.price,
+    userId: ticket.userId
+  })
 
   res.status(201).send(ticket)
 })

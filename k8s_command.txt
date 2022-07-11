@@ -7,3 +7,4 @@ kubectl get pods
 kubectl get deployments
 kubectl get services
 
+kubectl port-forward [depl/pods name] [portLocal/pod:portExpose]
