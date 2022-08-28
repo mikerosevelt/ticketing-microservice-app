@@ -29,6 +29,6 @@ app.all('*', async () => {
   throw new NotFoundError();
 });
 
-app.use(errorHandler);
+// app.use(errorHandler);
 
 export { app };
