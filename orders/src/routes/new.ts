@@ -1,5 +1,6 @@
 import {
   BadRequestError,
+  currentUser,
   NotFoundError,
   OrderStatus,
   requireAuth,
@@ -19,6 +20,7 @@ const EXPIRATION_WINDOW_SECONDS = 15 * 60;
 
 router.post(
   '/api/orders',
+  currentUser,
   requireAuth,
   [
     body('ticketId')

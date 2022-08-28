@@ -2,6 +2,7 @@ import {
   requireAuth,
   NotFoundError,
   NotAuthorizedError,
+  currentUser,
 } from '@au_ah_gelap/common';
 import express, { Request, Response } from 'express';
 import { OrderCancelledPublisher } from '../events/publishers/order-cancelled-publisher';
@@ -12,6 +13,7 @@ const router = express.Router();
 
 router.delete(
   '/api/orders/:id',
+  currentUser,
   requireAuth,
   async (req: Request, res: Response) => {
     const order = await Order.findById(req.params.id).populate('ticket');

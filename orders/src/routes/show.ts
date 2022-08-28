@@ -3,6 +3,7 @@ import {
   NotFoundError,
   BadRequestError,
   NotAuthorizedError,
+  currentUser,
 } from '@au_ah_gelap/common';
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
@@ -12,6 +13,7 @@ const router = express.Router();
 
 router.post(
   '/api/orders/:id',
+  currentUser,
   requireAuth,
   async (req: Request, res: Response) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id))
