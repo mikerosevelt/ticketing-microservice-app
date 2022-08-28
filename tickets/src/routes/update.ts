@@ -1,39 +1,56 @@
-import { requireAuth, NotFoundError, validateRequest, NotAuthorizedError } from '@au_ah_gelap/common'
-import express, { Request, Response } from 'express'
-import { body } from 'express-validator'
-import { Ticket } from '../models/ticket'
-import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher'
-import { natsWrapper } from '../nats-wrapper'
+import {
+  requireAuth,
+  NotFoundError,
+  validateRequest,
+  NotAuthorizedError,
+  currentUser,
+  BadRequestError,
+} from '@au_ah_gelap/common';
+import express, { Request, Response } from 'express';
+import { body } from 'express-validator';
+import { Ticket } from '../models/ticket';
+import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
-const router = express.Router()
+const router = express.Router();
 
-router.put('/api/tickets/:id', requireAuth, [
-  body('title').not().isEmpty().withMessage('Title is required'),
-  body('price').isFloat({ gt: 0 }).withMessage('Price must be greater than 0'),
-],
-validateRequest,
-async (req: Request, res: Response) => {
-  const ticket = await Ticket.findById(req.params.id)
+router.put(
+  '/api/tickets/:id',
+  currentUser,
+  requireAuth,
+  [
+    body('title').not().isEmpty().withMessage('Title is required'),
+    body('price')
+      .isFloat({ gt: 0 })
+      .withMessage('Price must be greater than 0'),
+  ],
+  validateRequest,
+  async (req: Request, res: Response) => {
+    const ticket = await Ticket.findById(req.params.id);
 
-  if (!ticket) throw new NotFoundError()
+    if (!ticket) throw new NotFoundError();
 
-  if (req.currentUser!.id !== ticket.id) throw new NotAuthorizedError()
+    if (ticket.orderId)
+      throw new BadRequestError('Cannot edit a reserved ticket');
 
-  ticket.set({
-    title: req.body.title,
-    price: req.body.price
-  })
+    if (req.currentUser!.id !== ticket.userId) throw new NotAuthorizedError();
 
-  await ticket.save()
-  new TicketUpdatedPublisher(natsWrapper.client).publish({
-    id: ticket.id,
-    title: ticket.title,
-    price: ticket.price,
-    userId: ticket.userId,
-    version: ticket.version
-  })
+    ticket.set({
+      title: req.body.title,
+      price: req.body.price,
+    });
 
-  res.send(ticket)
-})
+    await ticket.save();
+    new TicketUpdatedPublisher(natsWrapper.client).publish({
+      id: ticket.id,
+      title: ticket.title,
+      price: ticket.price,
+      userId: ticket.userId,
+      version: ticket.version,
+    });
 
-export { router as updateTicketRouter }
+    res.send(ticket);
+  }
+);
+
+export { router as updateTicketRouter };

@@ -1,16 +1,20 @@
-import { requireAuth } from '@au_ah_gelap/common'
-import express, { Request, Response } from 'express'
-import { Order } from '../models/order'
+import { currentUser, requireAuth } from '@au_ah_gelap/common';
+import express, { Request, Response } from 'express';
+import { Order } from '../models/order';
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/api/orders', requireAuth, async (req: Request, res: Response) => {
-  const orders = Order.find({
-    userId: req.currentUser!.id
-  }).populate('ticket')
+router.get(
+  '/api/orders',
+  currentUser,
+  requireAuth,
+  async (req: Request, res: Response) => {
+    const orders = Order.find({
+      userId: req.currentUser!.id,
+    }).populate('ticket');
 
-  res.send(orders)
-})
+    res.send(orders);
+  }
+);
 
-
-export { router as indexOrderRouter }
+export { router as indexOrderRouter };
