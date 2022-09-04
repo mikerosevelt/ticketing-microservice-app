@@ -11,7 +11,7 @@ import { Order } from '../models/order';
 
 const router = express.Router();
 
-router.post(
+router.get(
   '/api/orders/:id',
   currentUser,
   requireAuth,
@@ -25,7 +25,7 @@ router.post(
 
     if (order.userId !== req.currentUser!.id) throw new NotAuthorizedError();
 
-    res.send('Show');
+    res.send(order);
   }
 );
 
