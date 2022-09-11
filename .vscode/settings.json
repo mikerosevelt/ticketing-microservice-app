@@ -3,5 +3,6 @@
   "editor.tabSize": 2,
   "javascript.preferences.quoteStyle": "auto",
   "typescript.preferences.quoteStyle": "auto",
-  "prettier.singleQuote": true
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "none"
 }
