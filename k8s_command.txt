@@ -1,7 +1,8 @@
 minikube start
 
 Creating a secret
-kubectl creat secret generic jwt-secret --from-literal=JWT_KEY=[key]
+kubectl creat secret generic jwt-secret --from-literal=JWT_KEY=value
+kubectl creat secret generic stripe-secret --from-literal=STRIPE_KEY=value
 
 kubectl get pods
 kubectl get deployments
