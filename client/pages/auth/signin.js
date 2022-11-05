@@ -2,20 +2,20 @@ import { useState } from 'react';
 import Router from 'next/router';
 import useRequest from '../../hooks/use-request';
 
-const signin = () => {
+const Signin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { doResquest, errors } = useRequest({
+  const { doRequest, errors } = useRequest({
     url: '/api/users/signin',
     method: 'post',
     body: { email, password },
-    onSuccess: () => Router.push('/'),
+    onSuccess: () => Router.push('/')
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await doResquest();
+    await doRequest();
   };
 
   return (
@@ -49,4 +49,4 @@ const signin = () => {
   );
 };
 
-export default signin;
+export default Signin;

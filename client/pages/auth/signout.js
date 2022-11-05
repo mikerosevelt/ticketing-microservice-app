@@ -2,18 +2,18 @@ import { Router } from 'next/router';
 import { useEffect } from 'react';
 import useRequest from '../../hooks/use-request';
 
-const signout = () => {
-  const { doResquest } = useRequest({
+const Signout = () => {
+  const { doRequest } = useRequest({
     url: '/api/users/signout',
     method: 'post',
     body: {},
-    onSuccess: () => Router.push('/'),
+    onSuccess: () => Router.push('/')
   });
 
   useEffect(() => {
-    doResquest();
+    doRequest();
   }, []);
   return <div>signout</div>;
 };
 
-export default signout;
+export default Signout;
